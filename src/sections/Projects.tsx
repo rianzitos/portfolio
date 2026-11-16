@@ -38,7 +38,7 @@ function ProjectRow({ project, index }: { project: Project; index: string }) {
       <Reveal className="grid-12 gap-y-10">
         <div className="col-span-12 lg:col-span-6">
           <p className="eyebrow tabular text-muted">{index}</p>
-          <h3 className="display mt-3 text-[clamp(2.75rem,6.5vw,5.5rem)] leading-[0.9]">{project.title}</h3>
+          <h3 className="display mt-3 text-[clamp(2.2rem,12.6vw,2.75rem)] leading-[0.9] sm:text-[clamp(2.75rem,6.5vw,5.5rem)]">{project.title}</h3>
           <p className="mt-6 max-w-xl text-[1.2rem] leading-snug font-medium tracking-[-0.01em] text-pretty">{t(project.summary)}</p>
           <p className="mt-4 max-w-xl leading-relaxed text-pretty text-muted">{t(project.description)}</p>
 

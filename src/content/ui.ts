@@ -176,6 +176,27 @@ export const ui = {
     chapters: L('Capítulos do vídeo', 'Video chapters'),
   },
 
+  flow: {
+    label: L('Como funciona', 'How it works'),
+    title: L('Do cartão ao painel', 'From the card to the dashboard'),
+    step: L('Passo', 'Step'),
+    stepsAria: L('Etapas do funcionamento', 'How it works, step by step'),
+    goTo: L('Ir para o passo', 'Go to step'),
+    hint: L('Role para acompanhar', 'Scroll to follow along'),
+    canvasAria: L(
+      'Ilustração animada do caminho dos dados: catraca com leitor RFID, placa ESP32, servidor, banco de dados, previsão e painel.',
+      'Animated illustration of the data path: RFID turnstile, ESP32 board, server, database, forecast and dashboard.',
+    ),
+  },
+
+  card: {
+    label: L('Cartão de acesso', 'Access card'),
+    contact: L('Contato', 'Contact'),
+    place: L('Mococa · SP · Brasil', 'Mococa · SP · Brazil'),
+    hint: L('Arraste ou clique', 'Drag or click'),
+    hintAria: L('Virar o cartão', 'Flip the card'),
+  },
+
   gallery: {
     aria: L('Telas do sistema', 'System screens'),
     previous: L('Tela anterior', 'Previous screen'),

@@ -7,7 +7,7 @@ Portfólio pessoal de Rian Rafael, estudante do técnico em Desenvolvimento de S
 
 O site tem versão em **português e inglês** e **tema claro e escuro**, com os dois botões no cabeçalho.
 
-Feito com React 19, TypeScript, Vite, Tailwind CSS 4, Motion e Lucide. Fontes: Archivo (variável, com eixo de largura) e IBM Plex Mono, servidas junto com o site.
+Feito com React 19, TypeScript, Vite, Tailwind CSS 4, Motion e Lucide. A parte interativa usa Lenis (rolagem suave), GSAP com ScrollTrigger (animações ligadas à rolagem) e Three.js (cenas 3D). Fontes: Archivo (variável, com eixo de largura) e IBM Plex Mono, servidas junto com o site.
 
 ## Rodar no computador
 
@@ -101,6 +101,32 @@ Substitua `src/assets/rian.webp` (proporção 3:4, por exemplo 720 × 960 px). O
 
 As capturas do sistema web foram feitas rodando o código do repositório SystemFluxe localmente, com o script de dados de demonstração do próprio projeto (`config/dados_exemplo.sql`). Os nomes, a empresa e os números são fictícios, e o site avisa isso abaixo das galerias.
 
+## Interações: Lenis, GSAP e Three.js
+
+| O que | Onde fica |
+|---|---|
+| Rolagem suave, links de âncora e trava de rolagem (menu e diálogos) | `src/lib/smoothScroll.ts` |
+| Animações simples ligadas à rolagem (foto do "Sobre", nome do rodapé) | `src/lib/useScrub.ts` |
+| Cartão de acesso 3D ao lado do nome | `src/three/HeroCard.tsx` e `heroCardScene.ts` |
+| O que está escrito no cartão | `src/three/useCardContent.ts` (os dados vêm de `profile.ts`) |
+| Desenho das faces do cartão | `src/three/cardTexture.ts` |
+| Cena "Do cartão ao painel" (seção presa na tela) | `src/three/FlowStory.tsx` e `flowScene.ts` |
+| Textos e detalhes técnicos de cada etapa da cena | `flow` em `src/content/sicapda.ts` |
+
+Como funciona:
+
+- **Cartão 3D.** Inclina na direção do ponteiro, gira ao arrastar e vira com um clique (o verso mostra os contatos). Ao rolar a página, gira e se afasta.
+- **"Do cartão ao painel".** A seção fica presa na tela e a rolagem conduz a cena pelas seis etapas do SICAPDA. O trilho embaixo mostra o progresso e também serve para pular para uma etapa. A cena não tem linha do tempo própria: o GSAP move um objeto de estado conforme a rolagem e o Three.js só desenha esse estado, por isso ela anda para frente e para trás junto com a página.
+- **Cores e idioma.** As cenas leem as mesmas variáveis CSS do site e redesenham o cartão quando o tema ou o idioma mudam.
+
+Cuidados que já estão no código:
+
+- O Three.js só é baixado quando a cena vai aparecer, então não atrasa o carregamento do texto.
+- Fora da tela, as cenas param de desenhar.
+- Sem WebGL, o cartão não aparece e a cena vira o diagrama estático (`src/sicapda/FlowDiagram.tsx`).
+- Com "reduzir movimento" ativado no sistema, a rolagem não é suavizada, a cena vira o diagrama estático e o cartão fica parado (ainda dá para arrastar e virar).
+- Em telas muito baixas (menos de 480 px de altura), a cena também vira o diagrama estático.
+
 ## Publicar
 
 O site gera arquivos estáticos (pasta `dist/`) com caminhos relativos, então funciona tanto na raiz de um domínio quanto em uma subpasta.
@@ -126,7 +152,8 @@ src/
   sicapda/                 vídeo com capítulos, galeria de telas, diagrama, telas do app
   pages/                   montagem das duas páginas
   i18n/                    idioma: função L(), detecção e troca de idioma
-  lib/                     hooks e utilitários (tema, hora local, seção ativa, datas)
+  lib/                     hooks e utilitários (tema, rolagem suave, hora local, seção ativa, datas)
+  three/                   cenas 3D: cartão de acesso e "Do cartão ao painel"
   styles/index.css         tokens de cor, tipografia e estilos base
 ```
 
@@ -134,5 +161,6 @@ src/
 
 - Navegação completa por teclado, link "Pular para o conteúdo", foco visível, diálogos nativos (`<dialog>`) e menu mobile com foco preso.
 - Contraste de texto AA em todas as combinações de cor usadas, nos dois temas.
-- Com "reduzir movimento" ativado no sistema, as animações de deslocamento são desligadas e o vídeo não toca sozinho.
+- Com "reduzir movimento" ativado no sistema, as animações de deslocamento e a rolagem suave são desligadas, a cena 3D da rolagem vira um diagrama estático e o vídeo não toca sozinho.
+- O texto do cartão 3D e das etapas da cena também está no HTML, então leitores de tela não dependem do canvas.
 - O vídeo só é baixado quando começa a tocar; imagens abaixo da dobra carregam sob demanda.

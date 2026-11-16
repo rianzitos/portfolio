@@ -6,6 +6,7 @@ import { ui } from '../../content/ui'
 import { useT, type Text } from '../../i18n'
 import { cn } from '../../lib/cn'
 import { pad2 } from '../../lib/format'
+import { lockScroll, unlockScroll } from '../../lib/smoothScroll'
 import { useTheme } from '../../lib/theme'
 import { useActiveSection } from '../../lib/useActiveSection'
 import { useHeaderTheme } from '../../lib/useHeaderTheme'
@@ -206,8 +207,7 @@ function MobileMenu({
 
   useEffect(() => {
     if (!open) return
-    const root = document.documentElement
-    root.style.overflow = 'hidden'
+    lockScroll()
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
       if (e.key === 'Tab' && panelRef.current) {
@@ -233,7 +233,7 @@ function MobileMenu({
     const onResize = () => window.innerWidth >= 1024 && onClose()
     window.addEventListener('resize', onResize)
     return () => {
-      root.style.overflow = ''
+      unlockScroll()
       window.removeEventListener('keydown', onKey)
       window.removeEventListener('resize', onResize)
     }
@@ -246,6 +246,7 @@ function MobileMenu({
           id="menu-mobile"
           ref={panelRef}
           role="dialog"
+          data-lenis-prevent
           aria-modal="true"
           aria-label={t(ui.header.menu)}
           className="fixed inset-0 z-40 flex flex-col bg-paper pt-16 text-ink lg:hidden"

@@ -3,17 +3,21 @@ import { Reveal } from '../components/ui/Reveal'
 import { SectionHead } from '../components/ui/SectionHead'
 import { sectionNumber } from '../content/navigation'
 import { sicapda } from '../content/sicapda'
+import { ui } from '../content/ui'
+import { useT } from '../i18n'
 import { ScreenGallery } from '../sicapda/ScreenGallery'
 import { VideoTour } from '../sicapda/VideoTour'
 import { SicapdaWordmark } from '../sicapda/Wordmark'
-import { ui } from '../content/ui'
-import { useT } from '../i18n'
+import { FlowStory } from '../three/FlowStory'
 
 const homeScreens = sicapda.screens.filter((s) =>
   ['painel', 'analise', 'producao', 'pessoas', 'relatorios', 'assistente', 'painel-escuro'].includes(s.id),
 )
 
-/** Capítulo escuro do projeto principal. Usa o amarelo da marca do SICAPDA como acento local. */
+/**
+ * Capítulo escuro do projeto principal. Usa o amarelo da marca do SICAPDA como acento local.
+ * Ordem: o que é → por quê → como funciona (cena 3D na rolagem) → ver funcionando (vídeo e telas).
+ */
 export function FeaturedSicapda({ caseStudyHref }: { caseStudyHref: string }) {
   const t = useT()
   return (
@@ -59,9 +63,9 @@ export function FeaturedSicapda({ caseStudyHref }: { caseStudyHref: string }) {
                 <dt className="eyebrow pt-[0.2em] text-muted-dark">Stack</dt>
                 <dd>
                   <ul className="flex flex-wrap gap-1.5">
-                    {sicapda.tech.map((t) => (
-                      <li key={t} className="eyebrow border border-paper/20 px-2 py-1 text-[0.68rem] text-paper/90">
-                        {t}
+                    {sicapda.tech.map((tech) => (
+                      <li key={tech} className="eyebrow border border-paper/20 px-2 py-1 text-[0.68rem] text-paper/90">
+                        {tech}
                       </li>
                     ))}
                   </ul>
@@ -70,16 +74,6 @@ export function FeaturedSicapda({ caseStudyHref }: { caseStudyHref: string }) {
             </dl>
           </Reveal>
         </div>
-
-        <Reveal className="mt-20">
-          <div className="mb-5 flex items-baseline justify-between gap-4">
-            <h3 className="eyebrow text-paper">{t(ui.featured.tour)}</h3>
-            <p className="eyebrow text-muted-dark">
-              {sicapda.video.duration} · {t(ui.featured.tourAside)}
-            </p>
-          </div>
-          <VideoTour />
-        </Reveal>
 
         <div className="grid-12 mt-24 gap-y-12">
           {[sicapda.problem, sicapda.solution].map((block, i) => (
@@ -94,6 +88,28 @@ export function FeaturedSicapda({ caseStudyHref }: { caseStudyHref: string }) {
             </Reveal>
           ))}
         </div>
+
+        <h3 className="eyebrow mt-24 flex items-center gap-2 text-sica">
+          <span aria-hidden className="size-1.5 bg-sica" />
+          {t(ui.flow.label)}
+        </h3>
+      </div>
+
+      {/* Como funciona: a seção prende na tela e a rolagem conduz a cena 3D. */}
+      <div className="mt-4">
+        <FlowStory tone="dark" />
+      </div>
+
+      <div className="shell">
+        <Reveal className="mt-20">
+          <div className="mb-5 flex items-baseline justify-between gap-4">
+            <h3 className="eyebrow text-paper">{t(ui.featured.tour)}</h3>
+            <p className="eyebrow text-muted-dark">
+              {sicapda.video.duration} · {t(ui.featured.tourAside)}
+            </p>
+          </div>
+          <VideoTour />
+        </Reveal>
 
         <Reveal className="mt-24">
           <div className="mb-2 flex items-baseline justify-between gap-4">

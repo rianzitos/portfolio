@@ -10,7 +10,7 @@ import { SectionHead } from '../components/ui/SectionHead'
 import { sicapda } from '../content/sicapda'
 import { pad2 } from '../lib/format'
 import { AppScreens } from '../sicapda/AppScreens'
-import { FlowDiagram } from '../sicapda/FlowDiagram'
+import { FlowStory } from '../three/FlowStory'
 import { ScreenGallery } from '../sicapda/ScreenGallery'
 import { VideoTour } from '../sicapda/VideoTour'
 import { SicapdaWordmark } from '../sicapda/Wordmark'
@@ -138,9 +138,9 @@ export function SicapdaPage() {
               className="display mt-12 text-[clamp(2.25rem,5.4vw,4.75rem)] leading-[0.92]"
               lines={t(c.howTitle)}
             />
-            <div className="mt-16">
-              <FlowDiagram />
-            </div>
+          </div>
+          <div className="relative mt-12">
+            <FlowStory tone="light" />
           </div>
         </section>
 

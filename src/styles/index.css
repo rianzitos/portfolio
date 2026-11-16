@@ -72,9 +72,14 @@
     background: var(--color-paper);
   }
 
+  /* A rolagem suave é feita pelo Lenis (src/lib/smoothScroll.ts). Esta regra só vale
+     se ele não estiver ativo. */
   @media (prefers-reduced-motion: no-preference) {
-    html { scroll-behavior: smooth; }
+    html:not(.lenis) { scroll-behavior: smooth; }
   }
+
+  /* Seções que recebem foco ao navegar por um link de âncora não precisam de contorno. */
+  [tabindex="-1"]:focus { outline: none; }
 
   body {
     background: var(--color-paper);

@@ -1,6 +1,7 @@
 import { X } from 'lucide-react'
 import { useEffect, useRef, type ReactNode } from 'react'
 import { cn } from '../../lib/cn'
+import { lockScroll, unlockScroll } from '../../lib/smoothScroll'
 import { ui } from '../../content/ui'
 import { useT } from '../../i18n'
 
@@ -19,26 +20,35 @@ interface DialogProps {
  */
 export function Dialog({ open, onClose, label, children, className, onKeyDown }: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null)
+  const locked = useRef(false)
+
+  // A rolagem da página fica travada enquanto o diálogo está aberto.
+  const setLocked = (next: boolean) => {
+    if (locked.current === next) return
+    locked.current = next
+    if (next) lockScroll()
+    else unlockScroll()
+  }
 
   useEffect(() => {
     const dialog = ref.current
     if (!dialog) return
     if (open && !dialog.open) {
       dialog.showModal()
-      document.documentElement.style.overflow = 'hidden'
+      setLocked(true)
     } else if (!open && dialog.open) {
       dialog.close()
     }
   }, [open])
 
   // Se o componente sair da tela com o diálogo aberto, devolve a rolagem da página.
-  useEffect(() => () => void (document.documentElement.style.overflow = ''), [])
+  useEffect(() => () => setLocked(false), [])
 
   useEffect(() => {
     const dialog = ref.current
     if (!dialog) return
     const handleClose = () => {
-      document.documentElement.style.overflow = ''
+      setLocked(false)
       onClose()
     }
     dialog.addEventListener('close', handleClose)
@@ -49,6 +59,7 @@ export function Dialog({ open, onClose, label, children, className, onKeyDown }:
     <dialog
       ref={ref}
       aria-label={label}
+      data-lenis-prevent
       onKeyDown={onKeyDown}
       onClick={(e) => {
         if (e.target === e.currentTarget) ref.current?.close()
