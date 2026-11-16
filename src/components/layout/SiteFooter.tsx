@@ -4,14 +4,19 @@ import { ui } from '../../content/ui'
 import { useT } from '../../i18n'
 import { useLocalTime } from '../../lib/useLocalTime'
 import { TextLink } from '../ui/ButtonLink'
+import { useRef } from 'react'
+import { useScrub } from '../../lib/useScrub'
 
 export function SiteFooter({ topHref = '#topo' }: { topHref?: string }) {
   const t = useT()
   const time = useLocalTime(profile.location.timeZone)
   const year = new Date().getFullYear()
+  const footerRef = useRef<HTMLElement>(null)
+  const nameRef = useRef<HTMLParagraphElement>(null)
+  useScrub(nameRef, { from: { yPercent: 55 }, to: { yPercent: 0 }, trigger: footerRef, start: 'top bottom', end: 'bottom bottom' })
 
   return (
-    <footer data-theme="dark" className="relative overflow-hidden bg-ink text-paper">
+    <footer ref={footerRef} data-theme="dark" className="relative overflow-hidden bg-ink text-paper">
       <div className="shell">
         <div className="grid-12 gap-y-8 border-t border-paper/15 py-10">
           <div className="eyebrow col-span-12 text-muted-dark sm:col-span-6 lg:col-span-4">
@@ -50,7 +55,7 @@ export function SiteFooter({ topHref = '#topo' }: { topHref?: string }) {
         </div>
       </div>
       <div aria-hidden className="shell select-none [container-type:inline-size]">
-        <p className="display -mb-[0.18em] whitespace-nowrap text-[12.6cqw] text-paper/[0.07]">
+        <p ref={nameRef} className="display -mb-[0.18em] whitespace-nowrap text-[12.6cqw] text-paper/[0.07]">
           {profile.name}
           <span className="text-signal/60">.</span>
         </p>

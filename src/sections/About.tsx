@@ -4,10 +4,15 @@ import { sectionNumber } from '../content/navigation'
 import { profile } from '../content/profile'
 import { ui } from '../content/ui'
 import { useT } from '../i18n'
+import { useRef } from 'react'
+import { useScrub } from '../lib/useScrub'
 
 export function About() {
   const t = useT()
   const { about, photo } = profile
+  const frameRef = useRef<HTMLDivElement>(null)
+  const photoRef = useRef<HTMLImageElement>(null)
+  useScrub(photoRef, { from: { yPercent: -7 }, to: { yPercent: 7 }, trigger: frameRef })
   return (
     <section id="sobre" className="relative py-24 sm:py-32">
       <div className="shell">
@@ -16,15 +21,16 @@ export function About() {
         <div className="grid-12 mt-12 gap-y-14 sm:mt-16">
           <Reveal className="col-span-12 sm:col-span-7 md:col-span-5 lg:col-span-4">
             <figure>
-              <div className="relative aspect-[3/4] overflow-hidden bg-paper-3">
+              <div ref={frameRef} className="relative aspect-[3/4] overflow-hidden bg-paper-3">
                 <img
+                  ref={photoRef}
                   src={photo.src}
                   alt={t(photo.alt)}
                   width={720}
                   height={960}
                   loading="lazy"
                   decoding="async"
-                  className="size-full object-cover grayscale contrast-[1.08] transition-[filter] duration-700 hover:grayscale-0"
+                  className="size-full scale-[1.16] object-cover grayscale contrast-[1.08] transition-[filter] duration-700 hover:grayscale-0"
                 />
                 <span aria-hidden className="absolute top-3 left-3 size-3 border-t border-l border-bone" />
                 <span aria-hidden className="absolute right-3 bottom-3 size-3 border-r border-b border-bone" />

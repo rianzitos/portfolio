@@ -87,11 +87,15 @@ export const sicapda = {
       id: 'rfid',
       title: L('Cartão RFID', 'RFID card'),
       text: L('A pessoa aproxima o cartão do leitor na catraca.', 'The person taps the card on the turnstile reader.'),
+      code: 'UID "04A39F2B"',
+      note: L('identificador do cartão (exemplo), lido por um MFRC522', 'card identifier (example), read by an MFRC522'),
     },
     {
       id: 'esp32',
       title: L('Catraca ESP32', 'ESP32 turnstile'),
       text: L('A placa lê o UID e chama o servidor por Wi-Fi, via HTTPS.', 'The board reads the UID and calls the server over Wi-Fi, via HTTPS.'),
+      code: 'POST /api/iot/acesso { uid }',
+      note: L('autenticado pelo cabeçalho X-Device-Token', 'authenticated by the X-Device-Token header'),
     },
     {
       id: 'api',
@@ -100,6 +104,8 @@ export const sicapda = {
         'O servidor valida o cartão, decide entrada ou saída e grava o acesso.',
         'The server validates the card, decides entry or exit and records the access.',
       ),
+      code: '{ autorizado, direcao, nome, mensagem }',
+      note: L('resposta que libera ou nega a catraca', 'the response that releases or denies the turnstile'),
     },
     {
       id: 'db',
@@ -108,6 +114,8 @@ export const sicapda = {
         'Acessos, produção e desperdício ficam no mesmo banco, separados por empresa.',
         'Access logs, production and waste live in the same database, separated by company.',
       ),
+      code: 'INSERT INTO logs_acesso',
+      note: L('a tabela que alimenta painel, relatórios e previsão', 'the table that feeds the dashboard, reports and forecast'),
     },
     {
       id: 'previsao',
@@ -116,6 +124,8 @@ export const sicapda = {
         'Média ponderada dos mesmos dias da semana, tendência recente e feriados.',
         'Weighted average of the same weekdays, recent trend and holidays.',
       ),
+      code: 'Previsao.php',
+      note: L('pessoas → refeições → quilos', 'people → meals → kilos'),
     },
     {
       id: 'painel',
@@ -124,6 +134,8 @@ export const sicapda = {
         'Gestores acompanham tudo no site e no aplicativo, em tempo real.',
         'Managers follow everything on the website and in the app, in real time.',
       ),
+      code: 'GET /api/aovivo',
+      note: L('as telas abertas se atualizam sozinhas', 'open screens update on their own'),
     },
   ],
 

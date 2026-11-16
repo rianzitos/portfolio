@@ -8,6 +8,7 @@ import { pad2 } from '../lib/format'
 import { useLocalTime } from '../lib/useLocalTime'
 import { ui } from '../content/ui'
 import { useT } from '../i18n'
+import { HeroCard } from '../three/HeroCard'
 
 const ease = [0.16, 1, 0.3, 1] as const
 
@@ -38,12 +39,16 @@ export function Hero() {
           </p>
         </motion.div>
 
-        <h1 className="mt-[clamp(2rem,7vh,5.5rem)]">
-          <span className="sr-only">
-            {profile.name}, {t(profile.role).toLowerCase()}
-          </span>
-          <VariableName />
-        </h1>
+        {/* O tamanho da fonte fica neste bloco: o nome herda e o cartão 3D usa "em" para se posicionar. */}
+        <div className="relative mt-[clamp(2rem,7vh,5.5rem)] text-[19cqw] md:text-[clamp(3.6rem,15.6cqw,16rem)]">
+          <h1>
+            <span className="sr-only">
+              {profile.name}, {t(profile.role).toLowerCase()}
+            </span>
+            <VariableName />
+          </h1>
+          <HeroCard className="absolute top-[-0.85em] right-0 z-10 h-[1.8em] w-[2.6em] text-[1em] md:top-[-0.42em] md:h-[1.42em] md:w-[2.9em]" />
+        </div>
 
         <div className="grid-12 mt-auto gap-y-12 pt-12">
           <motion.div
@@ -236,7 +241,7 @@ function VariableName() {
     <span
       ref={wrapRef}
       aria-hidden
-      className="display block text-[19cqw] leading-[0.84] font-[800] tracking-[-0.045em] md:text-[clamp(3.6rem,15.6cqw,16rem)]"
+      className="display block leading-[0.84] font-[800] tracking-[-0.045em]"
     >
       <span className="block overflow-hidden pb-[0.04em]">{line(profile.firstName, 0)}</span>
       <span className="block overflow-hidden pb-[0.06em] pl-[22%]">
