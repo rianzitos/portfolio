@@ -2,9 +2,12 @@ import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { useRef } from 'react'
 import { PhoneFrame } from '../components/ui/Frames'
 import { sicapda } from '../content/sicapda'
+import { ui } from '../content/ui'
+import { useT } from '../i18n'
 
 /** Faixa horizontal com as telas do aplicativo Flutter. Arraste, role ou use as setas. */
 export function AppScreens() {
+  const t = useT()
   const trackRef = useRef<HTMLUListElement>(null)
 
   const scroll = (dir: 1 | -1) => {
@@ -20,7 +23,7 @@ export function AppScreens() {
       <div className="mb-5 flex justify-end gap-1">
         <button
           type="button"
-          aria-label="Telas anteriores"
+          aria-label={t(ui.app.previous)}
           onClick={() => scroll(-1)}
           className="inline-flex size-11 items-center justify-center border border-paper/20 text-paper transition-colors hover:bg-paper hover:text-ink"
         >
@@ -28,7 +31,7 @@ export function AppScreens() {
         </button>
         <button
           type="button"
-          aria-label="Próximas telas"
+          aria-label={t(ui.app.next)}
           onClick={() => scroll(1)}
           className="inline-flex size-11 items-center justify-center border border-paper/20 text-paper transition-colors hover:bg-paper hover:text-ink"
         >
@@ -38,7 +41,7 @@ export function AppScreens() {
       <ul
         ref={trackRef}
         tabIndex={0}
-        aria-label="Telas do aplicativo"
+        aria-label={t(ui.app.aria)}
         className="-mx-[clamp(1rem,4vw,3rem)] flex snap-x snap-mandatory scroll-px-[clamp(1rem,4vw,3rem)] gap-4 overflow-x-auto px-[clamp(1rem,4vw,3rem)] pb-4 [scrollbar-width:thin] focus-visible:outline-offset-[-2px]"
       >
         {sicapda.appScreens.map((s) => (
@@ -46,7 +49,7 @@ export function AppScreens() {
             <PhoneFrame>
               <img
                 src={s.src}
-                alt={`Aplicativo SICAPDA, tela ${s.label}`}
+                alt={`${t(ui.app.alt)} ${t(s.label)}`}
                 width={780}
                 height={1688}
                 loading="lazy"
@@ -54,7 +57,7 @@ export function AppScreens() {
                 className="aspect-[780/1688] w-full object-cover"
               />
             </PhoneFrame>
-            <p className="eyebrow mt-3 text-muted-dark">{s.label}</p>
+            <p className="eyebrow mt-3 text-muted-dark">{t(s.label)}</p>
           </li>
         ))}
       </ul>

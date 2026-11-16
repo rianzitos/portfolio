@@ -1,26 +1,30 @@
+import { L, type Localized, type Text } from '../i18n'
+
 /** Formação acadêmica. Sem datas inventadas: preencha `period` só quando tiver certeza. */
 export interface EducationItem {
-  title: string
+  title: Localized
   institution: string
-  status: 'Em andamento' | 'Concluído'
-  period?: string
-  description: string
-  href?: string
+  status: 'andamento' | 'concluido'
+  period?: Text
+  description: Localized
+  link?: { href: string; label: Localized }
 }
 
 export const education: EducationItem[] = [
   {
-    title: 'Técnico em Desenvolvimento de Sistemas',
+    title: L('Técnico em Desenvolvimento de Sistemas', 'Technical course in Systems Development'),
     institution: 'SENAI',
-    status: 'Em andamento',
-    description:
+    status: 'andamento',
+    description: L(
       'Desenvolvimento web, banco de dados, integração de sistemas, interfaces e aplicativos mobile. O projeto integrador (TCC) é o SICAPDA.',
-    href: '#sicapda',
+      'Web development, databases, systems integration, interfaces and mobile apps. The capstone project is SICAPDA.',
+    ),
+    link: { href: '#sicapda', label: L('Ver o projeto integrador', 'See the capstone project') },
   },
   {
-    title: 'Ensino Médio',
+    title: L('Ensino Médio', 'High school'),
     institution: 'SESI',
-    status: 'Em andamento',
-    description: 'Cursado em paralelo ao técnico do SENAI.',
+    status: 'andamento',
+    description: L('Cursado em paralelo ao técnico do SENAI.', 'Taken alongside the SENAI technical course.'),
   },
 ]

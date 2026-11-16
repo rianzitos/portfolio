@@ -5,6 +5,8 @@ Portfólio pessoal de Rian Rafael, estudante do técnico em Desenvolvimento de S
 - **Página inicial** (`/`): apresentação, sobre, SICAPDA em destaque, outros projetos, stack, cursos e certificados, formação e contato.
 - **Estudo de caso** (`/sicapda/`): o SICAPDA em detalhes, com vídeo, diagrama de funcionamento, funcionalidades, telas do sistema web, telas do app e equipe.
 
+O site tem versão em **português e inglês** e **tema claro e escuro**, com os dois botões no cabeçalho.
+
 Feito com React 19, TypeScript, Vite, Tailwind CSS 4, Motion e Lucide. Fontes: Archivo (variável, com eixo de largura) e IBM Plex Mono, servidas junto com o site.
 
 ## Rodar no computador
@@ -42,16 +44,31 @@ Todo o texto do site está em `src/content/`. Não é preciso mexer nos componen
 | SICAPDA: textos, telas, vídeo, equipe, links | `src/content/sicapda.ts` |
 | Cursos e certificados | `src/content/certificates.ts` |
 | Formação acadêmica | `src/content/education.ts` |
+| Textos de interface (botões, títulos de seção, rótulos) | `src/content/ui.ts` |
+
+### Português e inglês
+
+Todo texto traduzido é escrito com `L('português', 'english')`, as duas versões lado a lado:
+
+```ts
+role: L('Desenvolvedor de software em formação', 'Software developer in training'),
+```
+
+Ao mudar um texto, atualize as duas versões. Nomes próprios e termos iguais nos dois idiomas (como `'SICAPDA'` ou `'JavaScript'`) podem ficar como texto simples.
+
+Como o idioma inicial é escolhido:
+
+1. `?lang=en` ou `?lang=pt` no endereço. Use `https://rianzitos.github.io/portfolio/?lang=en` para mandar o link já em inglês.
+2. A última escolha da pessoa naquele navegador.
+3. O idioma do navegador: português se "pt" estiver entre os idiomas configurados, inglês nos outros casos.
+
+### Tema claro e escuro
+
+O site abre no tema claro e guarda a escolha de quem trocar. As cores dos dois temas ficam no topo de `src/styles/index.css`: o bloco `@theme` tem o tema claro e o bloco `:root[data-mode="dark"]` tem o escuro.
 
 ### E-mail de contato
 
-Em `src/content/profile.ts`, preencha o campo `email`:
-
-```ts
-email: 'seu.email@exemplo.com',
-```
-
-Com o campo vazio (`''`), o e-mail não aparece em lugar nenhum e o contato fica pelo LinkedIn e pelo GitHub. Preenchido, aparece na seção Contato (com botão de copiar) e no rodapé.
+O e-mail fica no campo `email` de `src/content/profile.ts` e aparece na seção Contato (com botão de copiar) e no rodapé. Para tirar o e-mail do site, deixe o campo vazio (`''`): o contato continua pelo LinkedIn e pelo GitHub.
 
 ### Adicionar um projeto
 
@@ -108,13 +125,14 @@ src/
   sections/                seções da página inicial
   sicapda/                 vídeo com capítulos, galeria de telas, diagrama, telas do app
   pages/                   montagem das duas páginas
-  lib/                     hooks e utilitários (hora local, seção ativa, datas)
+  i18n/                    idioma: função L(), detecção e troca de idioma
+  lib/                     hooks e utilitários (tema, hora local, seção ativa, datas)
   styles/index.css         tokens de cor, tipografia e estilos base
 ```
 
 ## Acessibilidade e desempenho
 
 - Navegação completa por teclado, link "Pular para o conteúdo", foco visível, diálogos nativos (`<dialog>`) e menu mobile com foco preso.
-- Contraste de texto AA em todas as combinações de cor usadas.
+- Contraste de texto AA em todas as combinações de cor usadas, nos dois temas.
 - Com "reduzir movimento" ativado no sistema, as animações de deslocamento são desligadas e o vídeo não toca sozinho.
 - O vídeo só é baixado quando começa a tocar; imagens abaixo da dobra carregam sob demanda.

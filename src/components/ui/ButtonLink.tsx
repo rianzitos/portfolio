@@ -1,6 +1,8 @@
 import { ArrowDown, ArrowRight, ArrowUpRight } from 'lucide-react'
 import type { AnchorHTMLAttributes, ReactNode } from 'react'
 import { cn } from '../../lib/cn'
+import { ui } from '../../content/ui'
+import { useT } from '../../i18n'
 
 type Variant = 'solid' | 'outline' | 'sica' | 'signal' | 'outline-dark'
 type Arrow = 'right' | 'down' | 'external' | 'none'
@@ -13,16 +15,17 @@ interface ButtonLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
 }
 
 const variants: Record<Variant, string> = {
-  solid: 'bg-ink text-paper hover:bg-signal hover:text-ink',
+  solid: 'bg-ink text-paper hover:bg-signal hover:text-carbon',
   outline: 'border border-ink/30 text-ink hover:border-ink hover:bg-ink hover:text-paper',
   'outline-dark': 'border border-paper/25 text-paper hover:border-paper hover:bg-paper hover:text-ink',
-  sica: 'bg-sica text-ink hover:bg-paper',
-  signal: 'bg-signal text-ink hover:bg-paper',
+  sica: 'bg-sica text-carbon hover:bg-paper',
+  signal: 'bg-signal text-carbon hover:bg-paper',
 }
 
 const arrows = { right: ArrowRight, down: ArrowDown, external: ArrowUpRight } as const
 
 export function ButtonLink({ href, children, variant = 'solid', arrow = 'right', className, ...rest }: ButtonLinkProps) {
+  const t = useT()
   const external = arrow === 'external' || /^https?:/.test(href)
   const Icon = arrow === 'none' ? null : arrows[arrow]
   return (
@@ -51,7 +54,7 @@ export function ButtonLink({ href, children, variant = 'solid', arrow = 'right',
           )}
         />
       )}
-      {external && <span className="sr-only"> (abre em nova aba)</span>}
+      {external && <span className="sr-only">{t(ui.common.newTab)}</span>}
     </a>
   )
 }
@@ -66,6 +69,7 @@ export function TextLink({
   children: ReactNode
   className?: string
 }) {
+  const t = useT()
   const external = /^https?:/.test(href)
   return (
     <a
@@ -80,7 +84,7 @@ export function TextLink({
         size={14}
         className="transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
       />
-      {external && <span className="sr-only"> (abre em nova aba)</span>}
+      {external && <span className="sr-only">{t(ui.common.newTab)}</span>}
     </a>
   )
 }

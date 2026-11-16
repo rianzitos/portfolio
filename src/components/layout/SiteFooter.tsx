@@ -1,9 +1,12 @@
 import { ArrowUp } from 'lucide-react'
 import { profile } from '../../content/profile'
+import { ui } from '../../content/ui'
+import { useT } from '../../i18n'
 import { useLocalTime } from '../../lib/useLocalTime'
 import { TextLink } from '../ui/ButtonLink'
 
 export function SiteFooter({ topHref = '#topo' }: { topHref?: string }) {
+  const t = useT()
   const time = useLocalTime(profile.location.timeZone)
   const year = new Date().getFullYear()
 
@@ -12,8 +15,10 @@ export function SiteFooter({ topHref = '#topo' }: { topHref?: string }) {
       <div className="shell">
         <div className="grid-12 gap-y-8 border-t border-paper/15 py-10">
           <div className="eyebrow col-span-12 text-muted-dark sm:col-span-6 lg:col-span-4">
-            <p className="text-paper">© {year} {profile.name}</p>
-            <p className="mt-2">Feito com React, TypeScript e Tailwind CSS.</p>
+            <p className="text-paper">
+              © {year} {profile.name}
+            </p>
+            <p className="mt-2">{t(ui.footer.madeWith)}</p>
           </div>
           <div className="eyebrow col-span-6 text-muted-dark lg:col-span-3">
             <p>
@@ -31,14 +36,14 @@ export function SiteFooter({ topHref = '#topo' }: { topHref?: string }) {
             {profile.email && (
               <li>
                 <a href={`mailto:${profile.email}`} className="link-underline">
-                  E-mail
+                  {t(ui.common.email)}
                 </a>
               </li>
             )}
           </ul>
           <div className="col-span-12 flex sm:col-span-6 lg:col-span-2 lg:justify-end">
             <a href={topHref} className="eyebrow group inline-flex min-h-11 items-center gap-2 self-start">
-              Voltar ao topo
+              {t(ui.common.backToTop)}
               <ArrowUp aria-hidden size={14} className="transition-transform duration-300 group-hover:-translate-y-1" />
             </a>
           </div>

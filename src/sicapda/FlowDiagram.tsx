@@ -3,6 +3,7 @@ import { sicapda } from '../content/sicapda'
 import { cn } from '../lib/cn'
 import { pad2 } from '../lib/format'
 import { Reveal } from '../components/ui/Reveal'
+import { useT } from '../i18n'
 
 const icons = {
   rfid: Nfc,
@@ -18,6 +19,7 @@ const icons = {
  * (só em telas grandes e sem "reduzir movimento").
  */
 export function FlowDiagram({ tone = 'light' }: { tone?: 'light' | 'dark' }) {
+  const t = useT()
   const steps = sicapda.flow
   const dark = tone === 'dark'
   return (
@@ -47,17 +49,20 @@ export function FlowDiagram({ tone = 'light' }: { tone?: 'light' | 'dark' }) {
                 <span
                   className={cn(
                     'relative z-10 flex size-11 shrink-0 items-center justify-center border lg:mx-auto',
-                    dark ? 'border-paper/30 bg-ink text-paper' : 'border-ink bg-paper text-ink',
-                    i === steps.length - 1 && 'border-sica bg-sica text-ink',
+                    i === steps.length - 1
+                      ? 'border-sica bg-sica text-carbon'
+                      : dark
+                        ? 'border-paper/30 bg-ink text-paper'
+                        : 'border-ink bg-paper text-ink',
                   )}
                 >
                   <Icon aria-hidden size={19} strokeWidth={1.6} />
                 </span>
                 <div className="lg:mt-5 lg:text-center">
                   <p className={cn('eyebrow tabular', dark ? 'text-muted-dark' : 'text-muted')}>{pad2(i + 1)}</p>
-                  <h4 className="mt-1 text-[1.08rem] font-bold tracking-[-0.01em]">{step.title}</h4>
+                  <h4 className="mt-1 text-[1.08rem] font-bold tracking-[-0.01em]">{t(step.title)}</h4>
                   <p className={cn('mt-1.5 text-[0.92rem] leading-snug text-pretty', dark ? 'text-paper/75' : 'text-muted')}>
-                    {step.text}
+                    {t(step.text)}
                   </p>
                 </div>
               </Reveal>

@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import { sicapda } from '../content/sicapda'
 import { cn } from '../lib/cn'
 import { formatSeconds } from '../lib/format'
+import { ui } from '../content/ui'
+import { useT } from '../i18n'
 
 const { video } = sicapda
 
@@ -14,6 +16,7 @@ const { video } = sicapda
  * A barra de progresso é dividida pelos capítulos do vídeo.
  */
 export function VideoTour({ className }: { className?: string }) {
+  const t = useT()
   const reduce = useReducedMotion()
   const wrapRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -99,7 +102,7 @@ export function VideoTour({ className }: { className?: string }) {
           loop
           playsInline
           preload="none"
-          aria-label="Tour de 30 segundos pelo SICAPDA: login, painel, análise mensal, pessoas, assistente, relatórios, configurações e aplicativo"
+          aria-label={t(ui.video.aria)}
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
           onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
@@ -113,41 +116,41 @@ export function VideoTour({ className }: { className?: string }) {
             onClick={toggle}
             className="absolute inset-0 flex items-center justify-center bg-ink/30 transition-colors hover:bg-ink/10"
           >
-            <span className="flex items-center gap-2.5 bg-sica px-3.5 py-2.5 text-[0.9rem] font-semibold text-ink sm:gap-3 sm:px-5 sm:py-3.5 sm:text-base">
+            <span className="flex items-center gap-2.5 bg-sica px-3.5 py-2.5 text-[0.9rem] font-semibold text-carbon sm:gap-3 sm:px-5 sm:py-3.5 sm:text-base">
               <Play aria-hidden size={16} fill="currentColor" />
-              Assistir ao tour · {video.duration}
+              {t(ui.video.watch)} · {video.duration}
             </span>
           </button>
         )}
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-gradient-to-t from-ink/70 to-transparent p-3 sm:p-4">
           <div className="pointer-events-auto flex gap-2">
-            <ControlButton onClick={toggle} label={playing ? 'Pausar vídeo' : 'Reproduzir vídeo'}>
+            <ControlButton onClick={toggle} label={t(playing ? ui.video.pause : ui.video.play)}>
               {playing ? <Pause aria-hidden size={16} /> : <Play aria-hidden size={16} />}
             </ControlButton>
-            <ControlButton onClick={toggleMute} label={muted ? 'Ativar som' : 'Desativar som'} wide>
+            <ControlButton onClick={toggleMute} label={t(muted ? ui.video.unmute : ui.video.mute)} wide>
               {muted ? <VolumeX aria-hidden size={16} /> : <Volume2 aria-hidden size={16} />}
-              <span className="eyebrow hidden sm:inline">{muted ? 'Ativar som' : 'Som ligado'}</span>
+              <span className="eyebrow hidden sm:inline">{t(muted ? ui.video.unmute : ui.video.soundOn)}</span>
             </ControlButton>
           </div>
           <div className="pointer-events-auto flex items-center gap-3">
             <span className="eyebrow tabular text-paper/80">
               {formatSeconds(time)} / {formatSeconds(duration)}
             </span>
-            <ControlButton onClick={fullscreen} label="Tela cheia">
+            <ControlButton onClick={fullscreen} label={t(ui.video.fullscreen)}>
               <Maximize2 aria-hidden size={16} />
             </ControlButton>
           </div>
         </div>
       </div>
 
-      <ol className="mt-3 grid grid-cols-4 gap-x-1.5 gap-y-3 md:grid-cols-8" aria-label="Capítulos do vídeo">
+      <ol className="mt-3 grid grid-cols-4 gap-x-1.5 gap-y-3 md:grid-cols-8" aria-label={t(ui.video.chapters)}>
         {chapters.map((c, i) => {
           const span = c.end - c.start
           const fill = Math.min(1, Math.max(0, (time - c.start) / span))
           const active = i === currentIndex
           return (
-            <li key={c.label}>
+            <li key={c.time}>
               <button
                 type="button"
                 onClick={() => seek(c.time)}
@@ -167,7 +170,7 @@ export function VideoTour({ className }: { className?: string }) {
                   )}
                 >
                   <span className="tabular text-[0.65rem] opacity-70">{formatSeconds(c.time)}</span>
-                  <span className="text-[0.66rem] leading-tight normal-case tracking-normal [overflow-wrap:anywhere] sm:text-[0.72rem]">{c.label}</span>
+                  <span className="text-[0.66rem] leading-tight normal-case tracking-normal [overflow-wrap:anywhere] sm:text-[0.72rem]">{t(c.label)}</span>
                 </span>
               </button>
             </li>
