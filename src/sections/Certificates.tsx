@@ -5,6 +5,7 @@ import { CloseButton, Dialog } from '../components/ui/Dialog'
 import { Reveal } from '../components/ui/Reveal'
 import { SectionHead } from '../components/ui/SectionHead'
 import {
+  areaLabels,
   certificateAreas,
   certificateFiles,
   certificates,
@@ -15,19 +16,21 @@ import {
 import { sectionNumber } from '../content/navigation'
 import { cn } from '../lib/cn'
 import { formatDate, formatMonthYear, pad2 } from '../lib/format'
+import { ui } from '../content/ui'
+import { useLang } from '../i18n'
 
 const areaStyle: Record<CertificateArea, { bar: string; dot: string }> = {
-  Tecnologia: { bar: 'bg-signal', dot: 'bg-signal' },
-  'Gestão e negócios': { bar: 'bg-ink', dot: 'bg-ink group-hover:bg-paper group-focus-visible:bg-paper' },
-  Sustentabilidade: { bar: 'bg-muted', dot: 'bg-muted group-hover:bg-muted-dark group-focus-visible:bg-muted-dark' },
-  'Segurança do trabalho': {
+  tecnologia: { bar: 'bg-signal', dot: 'bg-signal' },
+  gestao: { bar: 'bg-ink', dot: 'bg-ink group-hover:bg-paper group-focus-visible:bg-paper' },
+  sustentabilidade: { bar: 'bg-muted', dot: 'bg-muted group-hover:bg-muted-dark group-focus-visible:bg-muted-dark' },
+  seguranca: {
     bar: 'bg-[repeating-linear-gradient(135deg,var(--color-ink)_0_1.5px,transparent_1.5px_5px)]',
     dot: 'border border-ink bg-[repeating-linear-gradient(135deg,var(--color-ink)_0_1px,transparent_1px_3px)] group-hover:border-paper group-hover:bg-paper group-focus-visible:border-paper group-focus-visible:bg-paper',
   },
 }
 
 /** Mais recentes primeiro. */
-const sorted = [...certificates].sort((a, b) => b.end.localeCompare(a.end) || a.title.localeCompare(b.title))
+const sorted = [...certificates].sort((a, b) => b.end.localeCompare(a.end) || a.title.pt.localeCompare(b.title.pt))
 const totalHours = certificates.reduce((sum, c) => sum + c.hours, 0)
 const firstStart = certificates.map((c) => c.start).sort()[0]
 const lastEnd = certificates.map((c) => c.end).sort().at(-1) ?? firstStart
@@ -40,41 +43,42 @@ const byArea = certificateAreas
   .filter((a) => a.count > 0)
 
 export function Certificates() {
-  const [filter, setFilter] = useState<CertificateArea | 'Todos'>('Todos')
+  const { t, lang } = useLang()
+  const [filter, setFilter] = useState<CertificateArea | 'todos'>('todos')
   const [openSlug, setOpenSlug] = useState<string | null>(null)
-  const list = useMemo(() => (filter === 'Todos' ? sorted : sorted.filter((c) => c.area === filter)), [filter])
+  const list = useMemo(() => (filter === 'todos' ? sorted : sorted.filter((c) => c.area === filter)), [filter])
 
   const close = useCallback(() => setOpenSlug(null), [])
 
   return (
     <section id="cursos" className="relative py-24 sm:py-32">
       <div className="shell">
-        <SectionHead index={sectionNumber('cursos')} label="Cursos e certificados" aside="SENAI-SP · Educação a distância" />
+        <SectionHead index={sectionNumber('cursos')} label={t(ui.certificates.label)} aside={t(ui.certificates.aside)} />
 
         <div className="grid-12 mt-12 gap-y-10 sm:mt-16">
           <Reveal className="col-span-12 lg:col-span-8">
             <dl className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3">
-              <Stat value={String(certificates.length)} label="cursos concluídos" />
-              <Stat value={String(totalHours)} unit="h" label="de carga horária" />
-              <Stat value={String(byArea.length)} label="áreas de estudo" className="col-span-2 sm:col-span-1" />
+              <Stat value={String(certificates.length)} label={t(ui.certificates.statCourses)} />
+              <Stat value={String(totalHours)} unit="h" label={t(ui.certificates.statHours)} />
+              <Stat value={String(byArea.length)} label={t(ui.certificates.statAreas)} className="col-span-2 sm:col-span-1" />
             </dl>
           </Reveal>
           <Reveal className="col-span-12 lg:col-span-4 lg:col-start-9" delay={0.1}>
             <p className="text-[1.05rem] leading-relaxed text-pretty">
-              Cursos livres a distância do SENAI-SP, feitos entre {formatMonthYear(firstStart)} e {formatMonthYear(lastEnd)}. Cada
-              certificado pode ser aberto em PDF e conferido no site do SENAI pelo código de autenticação.
+              {t(ui.certificates.introA)} {formatMonthYear(firstStart, lang)} {t(ui.certificates.introAnd)}{' '}
+              {formatMonthYear(lastEnd, lang)}. {t(ui.certificates.introB)}
             </p>
           </Reveal>
         </div>
 
         {/* Horas por área */}
         <Reveal className="mt-14">
-          <p className="eyebrow mb-3 text-muted">Horas por área</p>
-          <div className="flex h-3 w-full gap-[3px]" role="img" aria-label={byArea.map((a) => `${a.area}: ${a.hours} horas`).join(', ')}>
+          <p className="eyebrow mb-3 text-muted">{t(ui.certificates.hoursByArea)}</p>
+          <div className="flex h-3 w-full gap-[3px]" role="img" aria-label={byArea.map((a) => `${t(areaLabels[a.area])}: ${a.hours} ${t(ui.certificates.hoursWord)}`).join(', ')}>
             {byArea.map((a) => (
               <span
                 key={a.area}
-                className={cn('h-full transition-opacity duration-300', areaStyle[a.area].bar, filter !== 'Todos' && filter !== a.area && 'opacity-25')}
+                className={cn('h-full transition-opacity duration-300', areaStyle[a.area].bar, filter !== 'todos' && filter !== a.area && 'opacity-25')}
                 style={{ width: `${(a.hours / totalHours) * 100}%` }}
               />
             ))}
@@ -82,8 +86,8 @@ export function Certificates() {
         </Reveal>
 
         {/* Filtros */}
-        <div className="mt-8 flex flex-wrap gap-2" role="group" aria-label="Filtrar por área">
-          {(['Todos', ...byArea.map((a) => a.area)] as const).map((area) => {
+        <div className="mt-8 flex flex-wrap gap-2" role="group" aria-label={t(ui.certificates.filterAria)}>
+          {(['todos', ...byArea.map((a) => a.area)] as const).map((area) => {
             const info = byArea.find((a) => a.area === area)
             const count = info ? info.count : certificates.length
             const active = filter === area
@@ -98,8 +102,8 @@ export function Certificates() {
                   active ? 'border-ink bg-ink text-paper' : 'border-ink/20 hover:border-ink',
                 )}
               >
-                {info && <span aria-hidden className={cn('size-2', areaStyle[info.area].dot)} />}
-                {area}
+                {info && <span aria-hidden className={cn('size-2', active ? 'bg-paper' : areaStyle[info.area].dot)} />}
+                {info ? t(areaLabels[info.area]) : t(ui.certificates.all)}
                 <span className={cn('eyebrow tabular', active ? 'text-paper/60' : 'text-muted')}>
                   {info ? `${info.hours} h` : `${count}`}
                 </span>
@@ -111,8 +115,7 @@ export function Certificates() {
         <CertificateList list={list} onOpen={setOpenSlug} />
 
         <p className="eyebrow mt-8 max-w-3xl leading-relaxed normal-case tracking-normal text-muted">
-          Nas versões publicadas aqui, o número do documento de identidade foi coberto. Os certificados originais podem ser
-          conferidos no site do SENAI-SP pelo código de autenticação de cada um.
+          {t(ui.certificates.privacy)}
         </p>
       </div>
 
@@ -139,6 +142,7 @@ function Stat({ value, unit, label, className }: { value: string; unit?: string;
 }
 
 function CertificateList({ list, onOpen }: { list: Certificate[]; onOpen: (slug: string) => void }) {
+  const { t, lang } = useLang()
   const reduce = useReducedMotion()
   const [hovered, setHovered] = useState<string | null>(null)
   const [canHover, setCanHover] = useState(false)
@@ -169,12 +173,12 @@ function CertificateList({ list, onOpen }: { list: Certificate[]; onOpen: (slug:
       }}
       onPointerLeave={() => setHovered(null)}
     >
-      <div className="eyebrow hidden grid-cols-[3rem_1fr_12rem_5rem_7rem_2.75rem] gap-4 border-b border-ink pb-3 text-muted lg:grid">
-        <span>Nº</span>
-        <span>Curso</span>
-        <span>Área</span>
-        <span className="text-right">Carga</span>
-        <span className="text-right">Conclusão</span>
+      <div className="eyebrow hidden grid-cols-[3rem_1fr_14rem_5rem_7rem_2.75rem] gap-4 border-b border-ink pb-3 text-muted lg:grid">
+        <span>{t(ui.certificates.colNumber)}</span>
+        <span>{t(ui.certificates.colCourse)}</span>
+        <span>{t(ui.certificates.colArea)}</span>
+        <span className="text-right">{t(ui.certificates.colHours)}</span>
+        <span className="text-right">{t(ui.certificates.colDone)}</span>
         <span />
       </div>
       <ol>
@@ -192,34 +196,34 @@ function CertificateList({ list, onOpen }: { list: Certificate[]; onOpen: (slug:
               onClick={() => onOpen(c.slug)}
               onPointerEnter={() => setHovered(c.slug)}
               onFocus={() => setHovered(null)}
-              className="group grid w-full grid-cols-[2.25rem_1fr_2.75rem] items-center gap-x-4 gap-y-1 py-4 text-left transition-colors duration-200 hover:bg-ink hover:text-paper focus-visible:bg-ink focus-visible:text-paper lg:grid-cols-[3rem_1fr_12rem_5rem_7rem_2.75rem] lg:py-5"
+              className="group grid w-full grid-cols-[2.25rem_1fr_2.75rem] items-center gap-x-4 gap-y-1 py-4 text-left transition-colors duration-200 hover:bg-ink hover:text-paper focus-visible:bg-ink focus-visible:text-paper lg:grid-cols-[3rem_1fr_14rem_5rem_7rem_2.75rem] lg:py-5"
             >
               <span className="eyebrow self-start pt-1 pl-1 tabular text-muted group-hover:text-muted-dark group-focus-visible:text-muted-dark lg:self-center lg:pt-0">
                 {pad2(i + 1)}
               </span>
               <span className="min-w-0">
                 <span className="block text-[1.05rem] leading-snug font-semibold tracking-[-0.01em] text-pretty lg:text-[1.15rem]">
-                  {c.title}
+                  {t(c.title)}
                 </span>
                 <span className="eyebrow mt-1.5 flex flex-wrap gap-x-3 text-[0.68rem] text-muted group-hover:text-muted-dark group-focus-visible:text-muted-dark lg:hidden">
-                  <span>{c.area}</span>
+                  <span>{t(areaLabels[c.area])}</span>
                   <span>{c.hours} h</span>
-                  <span>{formatMonthYear(c.end)}</span>
+                  <span>{formatMonthYear(c.end, lang)}</span>
                 </span>
               </span>
               <span className="hidden items-center gap-2 text-[0.92rem] lg:flex">
                 <span aria-hidden className={cn('size-2', areaStyle[c.area].dot)} />
-                {c.area}
+                {t(areaLabels[c.area])}
               </span>
               <span className="hidden text-right font-mono text-[0.92rem] tabular lg:block">{c.hours} h</span>
-              <span className="hidden text-right font-mono text-[0.92rem] tabular lg:block">{formatMonthYear(c.end)}</span>
+              <span className="hidden text-right font-mono text-[0.92rem] tabular lg:block">{formatMonthYear(c.end, lang)}</span>
               <span className="flex justify-end pr-1">
                 <ArrowUpRight
                   aria-hidden
                   size={18}
                   className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                 />
-                <span className="sr-only">Ver certificado</span>
+                <span className="sr-only">{t(ui.certificates.view)}</span>
               </span>
             </button>
           </motion.li>
@@ -259,6 +263,7 @@ function CertificateViewer({
   onNavigate: (slug: string) => void
   onClose: () => void
 }) {
+  const { t, lang } = useLang()
   const index = slug ? list.findIndex((c) => c.slug === slug) : -1
   const cert = index >= 0 ? list[index] : null
   const files = cert ? certificateFiles(cert.slug) : null
@@ -272,7 +277,7 @@ function CertificateViewer({
     <Dialog
       open={Boolean(cert)}
       onClose={onClose}
-      label={cert ? `Certificado: ${cert.title}` : 'Certificado'}
+      label={cert ? `${t(ui.certificates.dialogLabel)}: ${t(cert.title)}` : t(ui.certificates.dialogLabel)}
       className="w-[min(96vw,72rem)]"
       onKeyDown={(e) => {
         if (e.key === 'ArrowRight') go(1)
@@ -286,33 +291,37 @@ function CertificateViewer({
               <img
                 key={cert.slug}
                 src={files.image}
-                alt={`Certificado do curso ${cert.title}, emitido pelo ${cert.institution}`}
+                alt={`${t(ui.certificates.imageAltA)} ${cert.title.pt}, ${t(ui.certificates.imageAltB)} ${cert.institution}`}
                 className="max-h-[60dvh] w-auto max-w-full bg-white object-contain shadow-[0_20px_50px_-20px_rgb(0_0_0/0.7)] md:max-h-[84dvh]"
               />
             ) : (
-              <p className="eyebrow py-20 text-muted-dark">Imagem não disponível. Abra o PDF.</p>
+              <p className="eyebrow py-20 text-muted-dark">{t(ui.certificates.noImage)}</p>
             )}
           </div>
 
           <div className="flex flex-col p-6 sm:p-8 md:overflow-y-auto">
             <div className="flex items-start justify-between gap-4">
               <p className="eyebrow pt-3 text-muted-dark tabular">
-                Certificado {pad2(index + 1)} de {pad2(list.length)}
+                {t(ui.certificates.dialogLabel)} {pad2(index + 1)} {t(ui.certificates.of)} {pad2(list.length)}
               </p>
               <CloseButton onClick={onClose} />
             </div>
             <h3 className="mt-4 text-[clamp(1.6rem,3vw,2.3rem)] leading-[1.05] font-extrabold tracking-[-0.03em] text-balance [font-stretch:115%]">
-              {cert.title}
+              {t(cert.title)}
             </h3>
 
             <dl className="mt-6 border-b border-paper/15 text-[0.95rem]">
               {[
-                ['Instituição', cert.institution],
-                ['Unidade', cert.unit],
-                ['Modalidade', cert.modality],
-                ['Carga horária', `${cert.hours} horas`],
-                ['Período', `${formatDate(cert.start)} a ${formatDate(cert.end)}`],
-                ['Área', cert.area],
+                ...(lang === 'en' ? [[t(ui.certificates.originalTitle), cert.title.pt]] : []),
+                [t(ui.certificates.institution), cert.institution],
+                [t(ui.certificates.unit), cert.unit],
+                [t(ui.certificates.modality), t(cert.modality)],
+                [t(ui.certificates.workload), `${cert.hours} ${t(ui.certificates.hoursWord)}`],
+                [
+                  t(ui.certificates.period),
+                  `${formatDate(cert.start, lang)} ${t(ui.certificates.to)} ${formatDate(cert.end, lang)}`,
+                ],
+                [t(ui.certificates.area), t(areaLabels[cert.area])],
               ].map(([k, v]) => (
                 <div key={k} className="grid grid-cols-[7.5rem_1fr] gap-4 border-t border-paper/15 py-2.5">
                   <dt className="eyebrow pt-[0.2em] text-muted-dark">{k}</dt>
@@ -321,12 +330,12 @@ function CertificateViewer({
               ))}
             </dl>
 
-            <p className="eyebrow mt-6 text-muted-dark">Conteúdo</p>
+            <p className="eyebrow mt-6 text-muted-dark">{t(ui.certificates.content)}</p>
             <ul className="mt-2 space-y-1.5 text-[0.95rem] text-paper/85">
-              {cert.topics.map((t) => (
-                <li key={t} className="flex gap-3">
+              {t(cert.topics).map((topic) => (
+                <li key={topic} className="flex gap-3">
                   <span aria-hidden className="mt-[0.6em] size-1 shrink-0 bg-signal" />
-                  {t}
+                  {topic}
                 </li>
               ))}
             </ul>
@@ -337,10 +346,10 @@ function CertificateViewer({
                   href={files.pdf}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-12 items-center gap-2.5 bg-signal px-4 font-semibold text-ink transition-colors hover:bg-paper"
+                  className="inline-flex min-h-12 items-center gap-2.5 bg-signal px-4 font-semibold text-carbon transition-colors hover:bg-paper"
                 >
-                  <FileText aria-hidden size={17} /> Abrir PDF
-                  <span className="sr-only"> (abre em nova aba)</span>
+                  <FileText aria-hidden size={17} /> {t(ui.certificates.openPdf)}
+                  <span className="sr-only">{t(ui.common.newTab)}</span>
                 </a>
               )}
               {cert.verifyCode && (
@@ -350,12 +359,14 @@ function CertificateViewer({
                   rel="noopener noreferrer"
                   className="inline-flex min-h-12 items-center gap-2.5 border border-paper/25 px-4 font-semibold transition-colors hover:bg-paper hover:text-ink"
                 >
-                  <ShieldCheck aria-hidden size={17} /> Verificar no SENAI
-                  <span className="sr-only"> (abre em nova aba)</span>
+                  <ShieldCheck aria-hidden size={17} /> {t(ui.certificates.verify)}
+                  <span className="sr-only">{t(ui.common.newTab)}</span>
                 </a>
               )}
             </div>
-            {cert.verifyCode && <p className="eyebrow mt-3 text-[0.65rem] text-muted-dark">Código {cert.verifyCode}</p>}
+            {cert.verifyCode && <p className="eyebrow mt-3 text-[0.65rem] text-muted-dark">
+                {t(ui.certificates.code)} {cert.verifyCode}
+              </p>}
 
             <div className="mt-auto flex items-center justify-between gap-4 pt-8">
               <button
@@ -363,14 +374,14 @@ function CertificateViewer({
                 onClick={() => go(-1)}
                 className="eyebrow inline-flex min-h-11 items-center gap-2 text-muted-dark transition-colors hover:text-paper"
               >
-                <ArrowLeft aria-hidden size={15} /> Anterior
+                <ArrowLeft aria-hidden size={15} /> {t(ui.common.previous)}
               </button>
               <button
                 type="button"
                 onClick={() => go(1)}
                 className="eyebrow inline-flex min-h-11 items-center gap-2 text-muted-dark transition-colors hover:text-paper"
               >
-                Próximo <ArrowRight aria-hidden size={15} />
+                {t(ui.common.next)} <ArrowRight aria-hidden size={15} />
               </button>
             </div>
           </div>

@@ -10,6 +10,15 @@
     />
     <meta name="author" content="Rian Rafael" />
     <meta name="theme-color" content="#eeebe3" />
+    <!-- Aplica o tema salvo antes de a página aparecer, para não piscar. -->
+    <script>
+      try {
+        if (localStorage.getItem('rr-theme') === 'dark') {
+          document.documentElement.dataset.mode = 'dark'
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#151513')
+        }
+      } catch (e) {}
+    </script>
     <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg" />
 
     <!-- Prévia em redes sociais. Se publicar em outro endereço, troque a URL abaixo. -->

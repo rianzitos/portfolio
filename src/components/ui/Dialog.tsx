@@ -1,6 +1,8 @@
 import { X } from 'lucide-react'
 import { useEffect, useRef, type ReactNode } from 'react'
 import { cn } from '../../lib/cn'
+import { ui } from '../../content/ui'
+import { useT } from '../../i18n'
 
 interface DialogProps {
   open: boolean
@@ -52,7 +54,7 @@ export function Dialog({ open, onClose, label, children, className, onKeyDown }:
         if (e.target === e.currentTarget) ref.current?.close()
       }}
       className={cn(
-        'm-auto max-h-[100dvh] max-w-[100vw] bg-transparent p-0 text-paper backdrop:backdrop-blur-[2px] open:animate-[dialog-in_0.35s_var(--ease-out-expo)]',
+        'on-ink m-auto max-h-[100dvh] max-w-[100vw] bg-transparent p-0 text-paper backdrop:backdrop-blur-[2px] open:animate-[dialog-in_0.35s_var(--ease-out-expo)]',
         className,
       )}
     >
@@ -62,6 +64,7 @@ export function Dialog({ open, onClose, label, children, className, onKeyDown }:
 }
 
 export function CloseButton({ onClick, className }: { onClick: () => void; className?: string }) {
+  const t = useT()
   return (
     <button
       type="button"
@@ -72,7 +75,7 @@ export function CloseButton({ onClick, className }: { onClick: () => void; class
       )}
     >
       <X aria-hidden size={20} />
-      <span className="sr-only">Fechar</span>
+      <span className="sr-only">{t(ui.common.close)}</span>
     </button>
   )
 }
@@ -85,8 +88,9 @@ export function Lightbox({
   image: { src: string; alt: string; caption?: string } | null
   onClose: () => void
 }) {
+  const t = useT()
   return (
-    <Dialog open={Boolean(image)} onClose={onClose} label={image?.alt ?? 'Imagem ampliada'} className="w-[min(96vw,1600px)]">
+    <Dialog open={Boolean(image)} onClose={onClose} label={image?.alt ?? t(ui.common.enlargedImage)} className="w-[min(96vw,1600px)]">
       {image && (
         <figure className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-4">

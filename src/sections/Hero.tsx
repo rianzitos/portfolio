@@ -6,10 +6,13 @@ import { sections } from '../content/navigation'
 import { profile } from '../content/profile'
 import { pad2 } from '../lib/format'
 import { useLocalTime } from '../lib/useLocalTime'
+import { ui } from '../content/ui'
+import { useT } from '../i18n'
 
 const ease = [0.16, 1, 0.3, 1] as const
 
 export function Hero() {
+  const t = useT()
   const time = useLocalTime(profile.location.timeZone)
 
   return (
@@ -23,19 +26,21 @@ export function Hero() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.6 }}
         >
-          <p className="col-span-6 md:col-span-4">Portfólio — {new Date().getFullYear()}</p>
+          <p className="col-span-6 md:col-span-4">
+            {t(ui.common.portfolio)} — {new Date().getFullYear()}
+          </p>
           <p className="col-span-6 text-right md:col-span-4 md:text-left">
             {profile.location.city}, {profile.location.state} · <span className="tabular text-ink">{time}</span>
           </p>
           <p className="col-span-12 flex items-center gap-2 md:col-span-4 md:justify-end">
             <span aria-hidden className="size-2 rounded-full bg-signal motion-safe:animate-[pulse-dot_2.4s_infinite]" />
-            <span className="text-ink">{profile.availability}</span>
+            <span className="text-ink">{t(profile.availability)}</span>
           </p>
         </motion.div>
 
         <h1 className="mt-[clamp(2rem,7vh,5.5rem)]">
           <span className="sr-only">
-            {profile.name}, {profile.role.toLowerCase()}
+            {profile.name}, {t(profile.role).toLowerCase()}
           </span>
           <VariableName />
         </h1>
@@ -47,14 +52,14 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease, delay: 0.55 }}
           >
-            <p className="eyebrow text-signal-ink">{profile.role}</p>
-            <p className="mt-4 max-w-[34rem] text-[1.2rem] leading-[1.45] text-pretty sm:text-[1.35rem]">{profile.heroBio}</p>
+            <p className="eyebrow text-signal-ink">{t(profile.role)}</p>
+            <p className="mt-4 max-w-[34rem] text-[1.2rem] leading-[1.45] text-pretty sm:text-[1.35rem]">{t(profile.heroBio)}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="#sicapda" arrow="down">
-                Ver projetos
+                {t(ui.hero.viewProjects)}
               </ButtonLink>
               <ButtonLink href="#contato" variant="outline">
-                Entrar em contato
+                {t(ui.hero.contact)}
               </ButtonLink>
             </div>
             <ul className="eyebrow mt-7 flex gap-6">
@@ -67,7 +72,7 @@ export function Hero() {
                 >
                   <BrandIcon name="github" size={16} />
                   <span className="link-underline">GitHub</span>
-                  <span className="sr-only"> (abre em nova aba)</span>
+                  <span className="sr-only">{t(ui.common.newTab)}</span>
                 </a>
               </li>
               <li>
@@ -79,20 +84,20 @@ export function Hero() {
                 >
                   <BrandIcon name="linkedin" size={16} />
                   <span className="link-underline">LinkedIn</span>
-                  <span className="sr-only"> (abre em nova aba)</span>
+                  <span className="sr-only">{t(ui.common.newTab)}</span>
                 </a>
               </li>
             </ul>
           </motion.div>
 
           <motion.nav
-            aria-label="Índice da página"
+            aria-label={t(ui.hero.indexAria)}
             className="col-span-12 md:col-span-6 lg:col-span-5 lg:col-start-8"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease, delay: 0.7 }}
           >
-            <p className="eyebrow mb-3 text-muted">Índice</p>
+            <p className="eyebrow mb-3 text-muted">{t(ui.hero.index)}</p>
             <ol className="border-b border-ink/15">
               {sections.map((s, i) => (
                 <li key={s.id}>
@@ -102,10 +107,10 @@ export function Hero() {
                   >
                     <span className="eyebrow w-6 shrink-0 tabular text-muted">{pad2(i + 1)}</span>
                     <span className="text-[1rem] font-semibold tracking-[-0.01em] transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:translate-x-1.5">
-                      {s.label}
+                      {t(s.label)}
                     </span>
                     <span aria-hidden className="leader" />
-                    <span className="eyebrow text-muted">{s.note}</span>
+                    <span className="eyebrow text-muted">{t(s.note)}</span>
                   </a>
                 </li>
               ))}

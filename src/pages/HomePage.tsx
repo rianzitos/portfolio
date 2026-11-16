@@ -10,11 +10,14 @@ import { FeaturedSicapda } from '../sections/FeaturedSicapda'
 import { Hero } from '../sections/Hero'
 import { Projects } from '../sections/Projects'
 import { Stack } from '../sections/Stack'
+import { ui } from '../content/ui'
+import { useDocumentMeta } from '../i18n'
 
 const navItems = sections.map((s) => ({ id: s.id, label: s.label, href: `#${s.id}` }))
 
 export function HomePage() {
   useInitialHashScroll()
+  useDocumentMeta(ui.meta.homeTitle, ui.meta.homeDescription)
   return (
     <>
       <SiteHeader items={navItems} />

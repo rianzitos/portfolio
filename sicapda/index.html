@@ -10,6 +10,15 @@
     />
     <meta name="author" content="Rian Rafael" />
     <meta name="theme-color" content="#11110f" />
+    <!-- Aplica o tema salvo antes de a página aparecer, para não piscar. -->
+    <script>
+      try {
+        if (localStorage.getItem('rr-theme') === 'dark') {
+          document.documentElement.dataset.mode = 'dark'
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#151513')
+        }
+      } catch (e) {}
+    </script>
     <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg" />
 
     <meta property="og:type" content="article" />
@@ -21,7 +30,7 @@
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
   </head>
-  <body class="bg-ink">
+  <body style="background: #11110f">
     <div id="root"></div>
     <noscript>
       <p style="padding: 2rem; font-family: system-ui">
