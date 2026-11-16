@@ -18,6 +18,8 @@ export { gsap, ScrollTrigger }
  */
 let lenis: Lenis | null = null
 let locks = 0
+/** Rolagem pedida enquanto a página estava travada (ex.: link clicado dentro do menu mobile). */
+let pending: { run: () => void; at: number } | null = null
 
 type Target = string | number | HTMLElement
 
@@ -29,7 +31,14 @@ interface ScrollOptions {
 /** Aceleração e freada suaves para os saltos programados (links de âncora, trilho da cena 3D). */
 const easeInOut = (t: number) => (t < 0.5 ? 8 * t ** 4 : 1 - (-2 * t + 2) ** 4 / 2)
 
-export function scrollToTarget(target: Target, { immediate = false, onComplete }: ScrollOptions = {}) {
+export function scrollToTarget(target: Target, options: ScrollOptions = {}) {
+  const { immediate = false, onComplete } = options
+  // Com a rolagem travada, o pedido espera o destravamento: o Lenis cancela qualquer animação
+  // em andamento quando volta a rodar, então começar agora faria a rolagem parar no meio.
+  if (locks > 0 && !immediate) {
+    pending = { run: () => scrollToTarget(target, options), at: performance.now() }
+    return
+  }
   if (lenis) {
     lenis.scrollTo(target, { immediate, force: true, duration: 1.5, easing: easeInOut, onComplete })
     return
@@ -54,6 +63,10 @@ export function unlockScroll() {
   if (locks === 0) {
     document.documentElement.style.overflow = ''
     lenis?.start()
+    const queued = pending
+    pending = null
+    // Só vale se o pedido acabou de ser feito (o clique que fechou o menu).
+    if (queued && performance.now() - queued.at < 1000) queued.run()
   }
 }
 
